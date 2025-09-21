@@ -7,7 +7,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware - MUST come first
+
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
@@ -77,7 +77,7 @@ db.serialize(() => {
   });
 });
 
-// ✅ HEALTH CHECK ENDPOINT - Test this first
+//  HEALTH CHECK ENDPOINT - Test this first
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'OK', 
@@ -92,7 +92,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// ✅ SIMPLE TEST ENDPOINT
+//  SIMPLE TEST ENDPOINT
 app.get('/api/test', (req, res) => {
   res.json({ 
     message: 'Test successful!',
@@ -100,9 +100,9 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-// ✅ GET ALL CUSTOMERS (Fixed version)
+//  GET ALL CUSTOMERS (Fixed version)
 app.get('/api/customers', (req, res) => {
-  console.log('📦 GET /api/customers called with query:', req.query);
+  console.log(' GET /api/customers called with query:', req.query);
   
   const { page = 1, limit = 10, search = '', sortBy = 'created_at', sortOrder = 'DESC' } = req.query;
   const offset = (page - 1) * limit;
@@ -125,17 +125,17 @@ app.get('/api/customers', (req, res) => {
 
   db.all(sql, [searchTerm, searchTerm, searchTerm, parseInt(limit), offset], (err, rows) => {
     if (err) {
-      console.error('❌ Database error:', err);
+      console.error(' Database error:', err);
       return res.status(500).json({ error: 'Database error', details: err.message });
     }
 
     db.get(countSql, [searchTerm, searchTerm, searchTerm], (err, countResult) => {
       if (err) {
-        console.error('❌ Count error:', err);
+        console.error(' Count error:', err);
         return res.status(500).json({ error: 'Count error', details: err.message });
       }
 
-      console.log('✅ Successfully fetched', rows.length, 'customers');
+      console.log(' Successfully fetched', rows.length, 'customers');
       res.json({
         customers: rows,
         total: countResult.total,
@@ -147,7 +147,7 @@ app.get('/api/customers', (req, res) => {
   });
 });
 
-// ✅ GET SINGLE CUSTOMER
+//  GET SINGLE CUSTOMER
 app.get('/api/customers/:id', (req, res) => {
   const { id } = req.params;
   console.log('📦 GET /api/customers/', id);
@@ -163,7 +163,7 @@ app.get('/api/customers/:id', (req, res) => {
   });
 });
 
-// ✅ CREATE CUSTOMER
+//  CREATE CUSTOMER
 app.post('/api/customers', (req, res) => {
   console.log('📦 POST /api/customers with data:', req.body);
   
@@ -194,9 +194,9 @@ app.post('/api/customers', (req, res) => {
   );
 });
 
-// ✅ 404 HANDLER - This should be at the end
+//  404 HANDLER 
 app.use('/api/*', (req, res) => {
-  console.log('❌ 404 - Endpoint not found:', req.originalUrl);
+  console.log(' 404 - Endpoint not found:', req.originalUrl);
   res.status(404).json({ 
     error: 'Endpoint not found',
     path: req.originalUrl,
@@ -210,9 +210,9 @@ app.use('/api/*', (req, res) => {
   });
 });
 
-// ✅ ERROR HANDLER
+//  ERROR HANDLER
 app.use((err, req, res, next) => {
-  console.error('❌ Server error:', err);
+  console.error(' Server error:', err);
   res.status(500).json({ 
     error: 'Internal server error',
     message: err.message 
@@ -221,10 +221,10 @@ app.use((err, req, res, next) => {
 
 // ✅ START SERVER
 app.listen(PORT, () => {
-  console.log('🚀 Server started successfully!');
-  console.log(`📍 Port: ${PORT}`);
-  console.log(`🌐 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`📋 Test endpoint: http://localhost:${PORT}/api/test`);
-  console.log(`👥 Customers API: http://localhost:${PORT}/api/customers`);
-  console.log('✅ Ready to accept requests...');
+  console.log(` Server started successfully!');
+  console.log(` Port: ${PORT}`);
+  console.log(` Health check: http://localhost:${PORT}/api/health`);
+  console.log(` Test endpoint: http://localhost:${PORT}/api/test`);
+  console.log(` Customers API: http://localhost:${PORT}/api/customers`);
+  console.log(' Ready to accept requests...');
 });
